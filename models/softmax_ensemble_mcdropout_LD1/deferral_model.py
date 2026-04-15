@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader
-from AIROGS_dataloader import AIROGS
+# from AIROGS_dataloader import AIROGS
 from torchmetrics.classification import  BinaryROC
 import matplotlib.pyplot as plt
 import numpy as np
@@ -80,10 +80,15 @@ class Model(pl.LightningModule):
         return optimizer
     
     def test_dataloader(self):
-        path = "/AIROGS.h5"
-        test_dataset = AIROGS(file_path=path, t="test", transform=None)
+        # path = "/AIROGS.h5"
+        # test_dataset = AIROGS(file_path=path, t="test", transform=None)
+        transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+        ])
+        test_dataset = datasets.CIFAR10(root="./data", train=False, transform=transform_test, download=True)
         
-        return DataLoader(test_dataset, batch_size=4, shuffle=False, drop_last=False)
+        return DataLoader(test_dataset, batch_size=1, shuffle=False, drop_last=False)
     
     def deferral_loss(self, out, target, c = 0.3, eps_cst= 1e-8):
         loss = eps_cst
